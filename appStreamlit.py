@@ -1,5 +1,6 @@
 from datetime import datetime
 import streamlit as st
+import os
 
 # Función para calcular el tiempo trabajado
 def calcular_tiempo_trabajado(hora_inicio, hora_fin):
@@ -11,16 +12,17 @@ def calcular_tiempo_trabajado(hora_inicio, hora_fin):
     minutos, _ = divmod(segundos, 60)
     return horas, minutos
 
-# Cargar el archivo CSS
+# Cargar el archivo CSS desde la carpeta static
 def cargar_css(nombre_archivo):
-    with open(nombre_archivo) as f:
+    ruta_css = os.path.join("static", nombre_archivo)
+    with open(ruta_css) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
-# Interfaz de la aplicación
-st.title("Calculadora de Tiempo Trabajado ⏱️")
 
 # Cargar el archivo CSS
 cargar_css("botones.css")
+
+# Interfaz de la aplicación
+st.title("Calculadora de Tiempo Trabajado ⏱️")
 
 # Función para crear un campo de hora con horas y minutos separados
 def campo_hora(label, hora_predeterminada="09:00"):
