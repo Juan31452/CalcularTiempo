@@ -1,13 +1,10 @@
-# app.py
 from datetime import datetime
 import streamlit as st
 import os
-from Operations import Operations  # Asegúrate de que la clase Operations esté definida en este archivo
-from Utilities import Utilities  # Importamos la clase Utilities
+from RegisterController import RegisterController  # Importamos la nueva clase
 
-# Inicializamos las clases
-ops = Operations()
-utils = Utilities()
+# Inicializamos la clase RegisterController
+controller = RegisterController()
 
 # Inicializar el estado de sesión
 if "hora_inicio" not in st.session_state:
@@ -56,17 +53,13 @@ operation = st.selectbox("Elige una operación:", ["Guardar Registro", "Modifica
 # Opción para guardar un nuevo registro
 if operation == "Guardar Registro":
     if st.button("Guardar Registro"):
-        try:
-            horas_trabajadas, minutos_trabajados = ops.calcular_tiempo_trabajado(hora_inicio, hora_fin)
-            utils.guardar_en_csv(fecha_seleccionada, hora_inicio, hora_fin, horas_trabajadas, minutos_trabajados)
-            st.success("Registro guardado correctamente en CSV")
-        except Exception as e:
-            st.error(f"Error: {e}")
+        resultado = controller.guardar_registro(fecha_seleccionada, hora_inicio, hora_fin)
+        st.success(resultado)
 
 # ==========================
 # Opción para modificar un registro
 elif operation == "Modificar Registro":
-    df = utils.cargar_datos()
+    df = controller.utils.cargar_datos()
     if not df.empty:
         seleccion = st.radio("✏️ Selecciona un registro para modificar:", df.index, format_func=lambda x: f"{df.loc[x, 'Fecha']} | {df.loc[x, 'Hora de inicio']} - {df.loc[x, 'Hora de fin']}")
 
@@ -90,32 +83,26 @@ elif operation == "Modificar Registro":
 
         # Botón para actualizar
         if st.button("Actualizar"):
-            df.loc[seleccion, "Fecha"] = fecha_edit.strftime("%Y-%m-%d")  # Convertir fecha a texto
-            df.loc[seleccion, "Hora de inicio"] = hora_inicio_edit
-            df.loc[seleccion, "Hora de fin"] = hora_fin_edit
-            horas_trabajadas, minutos_trabajados = ops.calcular_tiempo_trabajado(hora_inicio_edit, hora_fin_edit)
-            df.loc[seleccion, "Horas trabajadas"] = horas_trabajadas
-            df.loc[seleccion, "Minutos trabajados"] = minutos_trabajados
-            utils.actualizar_csv(df)
-            st.success("Registro actualizado correctamente.")
+            resultado = controller.modificar_registro(seleccion, fecha_edit, hora_inicio_edit, hora_fin_edit)
+            st.success(resultado)
     else:
         st.warning("No hay registros para modificar.")
 
 # ==========================
 # Opción para eliminar un registro
 elif operation == "Eliminar Registro":
-    df = utils.cargar_datos()
+    df = controller.utils.cargar_datos()
     if not df.empty:
         seleccion = st.radio("🔴 Selecciona un registro para eliminar:", df.index, format_func=lambda x: f"{df.loc[x, 'Fecha']} | {df.loc[x, 'Hora de inicio']} - {df.loc[x, 'Hora de fin']}")
-        
+
         # Botón para eliminar
         if st.button("Eliminar"):
-            utils.borrar_fila(seleccion)
-            st.warning("Registro eliminado.")
+            resultado = controller.eliminar_registro(seleccion)
+            st.warning(resultado)
     else:
         st.warning("No hay registros para eliminar.")
 
 # Mostrar tabla de datos
 st.subheader("📜 Historial de tiempos trabajados")
-df = utils.cargar_datos()  # Asegurarse de cargar los datos más actualizados
+df = controller.utils.cargar_datos()  # Asegurarse de cargar los datos más actualizados
 st.dataframe(df)
