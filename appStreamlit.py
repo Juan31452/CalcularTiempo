@@ -2,9 +2,11 @@ from datetime import datetime
 import streamlit as st
 import os
 from RegisterController import RegisterController  # Importamos la nueva clase
+from Clases.Operations import Operations
 
-# Inicializamos la clase RegisterController
+# Inicializamos la clases
 controller = RegisterController()
+Ops = Operations()
 
 # Inicializar el estado de sesión
 if "hora_inicio" not in st.session_state:
@@ -23,8 +25,14 @@ def cargar_css(nombre_archivo):
 # Cargar el archivo CSS
 cargar_css("botones.css")
 
-# Mostrar las opciones para guardar, modificar o eliminar
-operation = st.selectbox("Elige una operación:", ["Guardar Registro", "Modificar Registro", "Eliminar Registro"])
+col1, col2 = st.columns(2)
+
+with col1:
+    operation = st.radio(
+        "Seleccione una opción:", 
+        ["Guardar Registro", "Modificar Registro", "Eliminar Registro", "Solo Calcular", "Ver Lista"], 
+        index=0
+    )
 
 # Interfaz
 st.title("Calculadora de Tiempo Trabajado ⏱️")
@@ -103,7 +111,38 @@ elif operation == "Eliminar Registro":
     else:
         st.warning("No hay registros para eliminar.")
 
-# Mostrar tabla de datos
-st.subheader("📜 Historial de tiempos trabajados")
-df = controller.utils.cargar_datos()  # Asegurarse de cargar los datos más actualizados
-st.dataframe(df)
+
+elif operation == "Solo Calcular":
+
+    
+    # ✅ Campos de hora con botones + y - 
+    col1, col2 = st.columns(2)
+    with col1:
+        horas_inicio = st.number_input("⏰ Hora de inicio", min_value=0, max_value=23, value=9, step=1)
+    with col2:
+        minutos_inicio = st.number_input("⏳ Minutos de inicio", min_value=0, max_value=55, value=0, step=5)
+
+    col3, col4 = st.columns(2)
+    with col3:
+        horas_fin = st.number_input("🏁 Hora de fin", min_value=0, max_value=23, value=17, step=1)
+    with col4:
+        minutos_fin = st.number_input("⌛ Minutos de fin", min_value=0, max_value=55, value=0, step=5)
+
+    # Formatear las horas en formato "HH:MM"
+    hora_inicio = f"{horas_inicio:02d}:{minutos_inicio:02d}"
+    hora_fin = f"{horas_fin:02d}:{minutos_fin:02d}"
+
+    if st.button("Calcular"):
+        try:
+         horas_trabajadas, minutos_trabajados = Ops.calcular_tiempo_trabajado(hora_inicio, hora_fin)
+         st.success(f"**Tiempo trabajado:** {horas_trabajadas} horas y {minutos_trabajados} minutos")
+        except Exception as e:
+         st.error(f"Error: {e}")
+
+
+elif operation == "Ver Lista":
+
+ # Mostrar tabla de datos
+ st.subheader("📜 Historial de tiempos trabajados")
+ df = controller.utils.cargar_datos()  # Asegurarse de cargar los datos más actualizados
+ st.dataframe(df)
