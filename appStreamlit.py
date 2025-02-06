@@ -3,6 +3,10 @@ import streamlit as st
 import os
 import csv
 import pandas as pd
+from Operations import Operations  # Importamos la clase Operations
+
+# Inicializamos la clase Operations
+ops = Operations()  # Aquí creamos una instancia de la clase Operations
 
 # Carpeta donde se guardan los CSV
 DIRECTORIO_CSV = "Filecsv"
@@ -11,15 +15,6 @@ os.makedirs(DIRECTORIO_CSV, exist_ok=True)
 # Archivo CSV
 CSV_FILE = os.path.join(DIRECTORIO_CSV, "tiempos_trabajados.csv")
 
-# Función para calcular tiempo trabajado
-def calcular_tiempo_trabajado(hora_inicio, hora_fin):
-    formato = "%H:%M"
-    inicio = datetime.strptime(hora_inicio, formato)
-    fin = datetime.strptime(hora_fin, formato)
-    diferencia = fin - inicio
-    horas, segundos = divmod(diferencia.seconds, 3600)
-    minutos, _ = divmod(segundos, 60)
-    return horas, minutos
 
 # Inicializar el estado de sesión
 if "hora_inicio" not in st.session_state:
@@ -27,12 +22,6 @@ if "hora_inicio" not in st.session_state:
 if "hora_fin" not in st.session_state:
     st.session_state.hora_fin = "17:00"
 if "resultado" not in st.session_state:
-    st.session_state.resultado = None
-
-# Función para borrar los valores
-def borrar_valores():
-    st.session_state.hora_inicio = "09:00"
-    st.session_state.hora_fin = "17:00"
     st.session_state.resultado = None
 
 # Cargar el archivo CSS desde la carpeta static
@@ -95,12 +84,17 @@ hora_fin = f"{horas_fin:02d}:{minutos_fin:02d}"
 # Botón para guardar
 if st.button("Guardar Registro"):
     try:
-        horas_trabajadas, minutos_trabajados = calcular_tiempo_trabajado(hora_inicio, hora_fin)
+        horas_trabajadas, minutos_trabajados = ops.calcular_tiempo_trabajado(hora_inicio, hora_fin)
         guardar_en_csv(fecha_seleccionada, hora_inicio, hora_fin, horas_trabajadas, minutos_trabajados)
         st.success("Registro guardado correctamente en CSV")
     except Exception as e:
         st.error(f"Error: {e}")
 
+# Botón para borrar los valores
+if st.button("Borrar Valores"):
+    ops.borrar_valores()
+    st.write("Valores borrados.")
+    
 # Cargar datos
 df = cargar_datos()
 
