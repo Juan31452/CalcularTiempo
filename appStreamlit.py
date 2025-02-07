@@ -25,21 +25,39 @@ def cargar_css(nombre_archivo):
 # Cargar el archivo CSS
 cargar_css("botones.css")
 
-col1, col2 = st.columns(2)
-
-with col1:
-    operation = st.radio(
-        "Seleccione una opción:", 
-        ["Guardar Registro", "Modificar Registro", "Eliminar Registro", "Solo Calcular", "Ver Lista"], 
-        index=0
-    )
 
 # Interfaz
 st.title("Calculadora de Tiempo Trabajado ⏱️")
 # ==========================
 
+# Inicializar la variable en la sesión si no existe
+if "operation" not in st.session_state:
+    st.session_state.operation = "Guardar Registro"
+
+# Dividir las opciones en dos columnas
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button("Guardar"):
+        st.session_state.operation = "Guardar"
+    if st.button("Solo Calcular"):
+        st.session_state.operation = "Solo Calcular"         
+with col2:
+    if st.button("Modificar"):
+        st.session_state.operation = "Modificar"    
+    if st.button("Ver Lista"):
+        st.session_state.operation = "Ver Lista"
+
+with col3:
+    if st.button("Eliminar "):
+        st.session_state.operation = "Eliminar"
+
+    
+# Mostrar la operación seleccionada
+st.write(f"Operación seleccionada: **{st.session_state.operation}**")
+
 # Opción para guardar un nuevo registro
-if operation == "Guardar Registro":
+if st.session_state.operation == "Guardar Registro":
 
     # 📅 Seleccionar fecha con calendario
     fecha_seleccionada = st.date_input("📅 Selecciona la fecha:", datetime.today())
@@ -67,7 +85,7 @@ if operation == "Guardar Registro":
 
 # ==========================
 # Opción para modificar un registro
-elif operation == "Modificar Registro":
+elif st.session_state.operation == "Modificar Registro":
     df = controller.utils.cargar_datos()
     if not df.empty:
         seleccion = st.radio("✏️ Selecciona un registro para modificar:", df.index, format_func=lambda x: f"{df.loc[x, 'Fecha']} | {df.loc[x, 'Hora de inicio']} - {df.loc[x, 'Hora de fin']}")
@@ -99,7 +117,7 @@ elif operation == "Modificar Registro":
 
 # ==========================
 # Opción para eliminar un registro
-elif operation == "Eliminar Registro":
+elif st.session_state.operation == "Eliminar Registro":
     df = controller.utils.cargar_datos()
     if not df.empty:
         seleccion = st.radio("🔴 Selecciona un registro para eliminar:", df.index, format_func=lambda x: f"{df.loc[x, 'Fecha']} | {df.loc[x, 'Hora de inicio']} - {df.loc[x, 'Hora de fin']}")
@@ -112,7 +130,7 @@ elif operation == "Eliminar Registro":
         st.warning("No hay registros para eliminar.")
 
 
-elif operation == "Solo Calcular":
+elif st.session_state.operation == "Solo Calcular":
 
     
     # ✅ Campos de hora con botones + y - 
@@ -140,7 +158,7 @@ elif operation == "Solo Calcular":
          st.error(f"Error: {e}")
 
 
-elif operation == "Ver Lista":
+elif st.session_state.operation == "Ver Lista":
 
  # Mostrar tabla de datos
  st.subheader("📜 Historial de tiempos trabajados")
