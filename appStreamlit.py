@@ -34,6 +34,9 @@ st.title("Calculadora de Tiempo Trabajado ⏱️")
 if "operation" not in st.session_state:
     st.session_state.operation = "Guardar Registro"
 
+# Contenedor para los botones con CSS
+st.markdown('<div class="button-container">', unsafe_allow_html=True)
+
 # Dividir las opciones en dos columnas
 col1, col2, col3 = st.columns(3)
 
