@@ -17,37 +17,70 @@ div.stNumberInput > div > div > button:last-child {
     border-radius: 5px !important;
 }
 
-/* Contenedor de botones en dos columnas */
-.button-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Dos columnas en pantallas grandes */
-    gap: 10px;
-    text-align: center;
-    max-width: 500px; /* Ajustar ancho máximo */
-    margin: auto;
+/* Estilo para el contenedor del selectbox */
+/* Estilo para el contenedor del selectbox */
+div[data-baseweb="select"] {
+    background-color: #f0f2f6; /* Color de fondo */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 8px; /* Espaciado interno */
+    border: 2px solid #4a90e2; /* Borde azul */
 }
 
-/* Estilos de los botones */
-.stButton>button {
-    width: 100%; /* Ocupar todo el ancho */
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 2px solid #008CBA;
-    background-color: #f0f0f0;
-    color: black;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
+/* Estilo para el texto dentro del selectbox */
+div[data-baseweb="select"] div {
+    color: #98df8a; /* Color del texto */
+    font-size: 16px; /* Tamaño de la fuente */
+    font-weight: bold; /* Texto en negrita */
 }
 
-.stButton>button:hover {
-    background-color: #008CBA;
-    color: white;
+/* Estilo para el ícono del selectbox */
+div[data-baseweb="select"] svg {
+    fill: #4a90e2; /* Color del ícono */
 }
 
-/* RESPONSIVE: En móviles (menos de 600px), cambia a una sola columna */
-@media (max-width: 600px) {
-    .button-container {
-        grid-template-columns: 1fr; /* Una sola columna en móviles */
-    }
+/* Estilo para el menú desplegable */
+div[role="listbox"] {
+    background-color: #ffffff; /* Color de fondo del menú */
+    border: 2px solid #4a90e2; /* Borde azul */
+    border-radius: 8px; /* Bordes redondeados */
+}
+
+/* Estilo para las opciones del menú desplegable */
+div[role="option"] {
+    color: #a1c46a; /* Color del texto */
+    padding: 8px; /* Espaciado interno */
+    font-size: 14px; /* Tamaño de la fuente */
+}
+
+/* Cambiar el color de fondo al pasar el mouse sobre una opción */
+div[role="option"]:hover {
+    background-color: #4a90e2; /* Fondo azul */
+    color: #ffffff; /* Texto blanco */
+}
+
+/* Estilos para la tabla de datos */
+.dataframe {
+    width: 100%; /* Ancho completo */
+    border-collapse: collapse; /* Eliminar espacios entre celdas */
+    font-family: Arial, sans-serif; /* Fuente */
+    font-size: 14px; /* Tamaño de la fuente */
+}
+
+/* Estilo para las celdas de la tabla */
+.dataframe th, .dataframe td {
+    padding: 12px; /* Espaciado interno */
+    text-align: left; /* Alinear texto a la izquierda */
+    border-bottom: 1px solid #ddd; /* Borde inferior */
+}
+
+/* Estilo para el encabezado de la tabla */
+.dataframe th {
+    background-color: #4a90e2; /* Color de fondo */
+    color: white; /* Color del texto */
+    font-weight: bold; /* Texto en negrita */
+}
+
+/* Cambiar el color de fondo al pasar el mouse sobre una fila */
+.dataframe tr:hover {
+    background-color: #f5f5f5; /* Fondo gris claro */
 }
